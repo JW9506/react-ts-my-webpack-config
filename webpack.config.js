@@ -2,6 +2,7 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const OptimizeCssAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const AddAssetHtmlPlugin = require("add-asset-html-webpack-plugin");
+const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 const webpack = require("webpack");
 const path = require("path");
 const publicURLRoot = "/";
@@ -83,6 +84,10 @@ module.exports = (_, { mode = "production" }) => {
       }
     },
     plugins: [
+      new ForkTsCheckerWebpackPlugin({
+        async: false,
+        memoryLimit: 4096
+      }),
       new HtmlWebpackPlugin({
         template: "./src/index.html",
         filename: "index.html",
