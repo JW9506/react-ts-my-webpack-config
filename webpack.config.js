@@ -6,6 +6,7 @@ const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 const webpack = require("webpack");
 const path = require("path");
 const publicURLRoot = "/";
+const SPATitle = "Demo";
 
 module.exports = (_, { mode = "production" }) => {
   const isProduction = mode === "production";
@@ -24,7 +25,7 @@ module.exports = (_, { mode = "production" }) => {
   ];
   const config = {
     mode,
-    entry: "./src/js/main.tsx",
+    entry: "./src/js/index.tsx",
     output: {
       path: path.resolve(__dirname, "dist"),
       filename: "js/[name].[hash:10].js",
@@ -33,7 +34,7 @@ module.exports = (_, { mode = "production" }) => {
     module: {
       rules: [
         {
-          test: /\.(t|j)sx?/i,
+          test: /\.(t|j)sx?$/i,
           exclude: /node_modules/,
           loader: "eslint-loader",
           enforce: "pre"
@@ -49,22 +50,35 @@ module.exports = (_, { mode = "production" }) => {
               use: [...commonCSSLoaders, "less-loader"]
             },
             {
-              test: /\.(jpg|png|gif)$/i,
+              test: /\.scss$/i,
+              use: [
+                ...commonCSSLoaders,
+                "sass-loader",
+                {
+                  loader: "sass-resources-loader",
+                  options: {
+                    resources: ["src/css/global.scss"]
+                  }
+                }
+              ]
+            },
+            {
+              test: /\.(jpe?g|png|gif|svg)$/i,
               loader: "url-loader",
               options: {
                 limit: 8 * 1024,
+                name: "[contenthash:10].[ext]",
                 outputPath: "imgs",
-                publicPath: `${publicURLRoot}/imgs`.replace(/\/\//g, "/"),
-                esModule: false
+                publicPath: `${publicURLRoot}/imgs`.replace(/\/\//g, "/")
               }
             },
             {
-              test: /\.jsx?/i,
+              test: /\.jsx?$/i,
               exclude: /node_modules/,
               loader: "babel-loader"
             },
             {
-              test: /\.tsx?/i,
+              test: /\.tsx?$/i,
               exclude: /node_modules/,
               use: [
                 "babel-loader",
@@ -91,28 +105,33 @@ module.exports = (_, { mode = "production" }) => {
       new HtmlWebpackPlugin({
         template: "./src/index.html",
         filename: "index.html",
-        title: "Only a demo",
+        title: SPATitle,
         minify: {
           removeComments: isProduction,
           collapseWhitespace: isProduction
-        }
+        },
+        favicon: "src/favicon.ico"
       }),
       isProduction &&
         new MiniCssExtractPlugin({ filename: "css/main.[contenthash:10].css" }),
       isProduction && new OptimizeCssAssetsPlugin(),
-      new webpack.DllReferencePlugin({
-        manifest: path.resolve(__dirname, "dll/manifest.json")
-      }),
-      new AddAssetHtmlPlugin({
-        filepath: path.resolve(__dirname, "dll/react.js"),
-        hash: true,
-        outputPath: "js",
-        publicPath: `${publicURLRoot}/js`.replace(/\/\//g, "/")
-      })
+      isProduction &&
+        new webpack.DllReferencePlugin({
+          manifest: path.resolve(__dirname, "dll/manifest.json")
+        }),
+      isProduction &&
+        new AddAssetHtmlPlugin({
+          filepath: path.resolve(__dirname, "dll/react.js"),
+          hash: true,
+          outputPath: "js",
+          publicPath: `${publicURLRoot}/js`.replace(/\/\//g, "/")
+        })
     ].filter(Boolean),
     devServer: {
       compress: true,
-      hot: true
+      hot: true,
+      contentBase: path.resolve(__dirname, "public"),
+      historyApiFallback: true
     },
     performance: {
       assetFilter(assetFilename) {

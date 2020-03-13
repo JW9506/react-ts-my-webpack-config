@@ -1,5 +1,5 @@
 import React from "react";
-import "../css/main.less";
+import "../css/main.scss";
 
 function App() {
   return (
