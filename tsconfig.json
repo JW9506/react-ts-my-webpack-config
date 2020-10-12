@@ -1,24 +1,23 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "module": "ESNext", /* Specify module code generation: 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', 'es2020', or 'ESNext'. */
+    "module": "ESNext",
     "lib": [
       "DOM",
-      "DOM.Iterable",
       "ESNext"
-    ], 
+    ],
     "skipLibCheck": true,
     "resolveJsonModule": true,
-    "allowJs": true, 
-    "checkJs": true, 
-    "jsx": "preserve",
-    // "noEmit": true, 
+    "allowJs": true,
+    "checkJs": true,
+    "jsx": "react",
+    "noEmit": true,
     "moduleResolution": "node",
     "isolatedModules": true,
     "strict": true,
-    "allowSyntheticDefaultImports": true, 
+    "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true 
+    "forceConsistentCasingInFileNames": true
   },
   "include": [
     "src"
